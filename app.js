@@ -16,17 +16,22 @@ const welcome = (req, res) => {
 
 app.get("/", welcome);
 
+//routes publiques
 app.get("/api/movies", movieHandlers.getMovies);
 app.get("/api/movies/:id", movieHandlers.getMovieById);
-app.post("/api/movies", verifyToken, movieHandlers.postMovie);
-
 app.get("/api/users", userHandlers.getUsers);
-app.post("/api/users", hashPassword, userHandlers.postUser);
 app.post(
   "/api/login",
   userHandlers.getUserByEmailWithPasswordAndPassToNext,
   verifyPassword
 );
+
+app.use(verifyToken); // authentication wall : verifyToken is activated for each route after this line
+
+app.post("/api/movies", movieHandlers.postMovie);
+app.post("/api/users", hashPassword, userHandlers.postUser);
+app.put("/api/movies/:id", movieHandlers.updateMovie);
+app.delete("/api/movies/:id", movieHandlers.deleteMovie);
 
 app.listen(port, (err) => {
   if (err) {
